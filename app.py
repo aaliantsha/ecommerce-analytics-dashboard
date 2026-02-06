@@ -84,9 +84,10 @@ def calculate_kpis(df):
     }
 
 def customer_segmentation(df):
-    """Perform RFM (Recency, Frequency, Monetary) analysis"""
+    """Perform RFM (Recency, Frequency, Monetary) analysis safely."""
     snapshot_date = df['InvoiceDate'].max() + timedelta(days=1)
     
+    # Aggregate RFM values
     rfm = df.groupby('CustomerID').agg({
         'InvoiceDate': lambda x: (snapshot_date - x.max()).days,
         'InvoiceNo': 'nunique',
@@ -94,14 +95,27 @@ def customer_segmentation(df):
     }).reset_index()
     
     rfm.columns = ['CustomerID', 'Recency', 'Frequency', 'Monetary']
+
+    # Safe qcut function
+    def safe_qcut(series, q=4, ascending=True):
+        try:
+            # Determine number of unique bins
+            bins = min(q, series.nunique())
+            # Generate labels dynamically
+            labels = list(range(bins, 0, -1)) if ascending else list(range(1, bins + 1))
+            return pd.qcut(series, bins, labels=labels, duplicates='drop')
+        except ValueError:
+            # If all values identical, assign middle score
+            return pd.Series([q // 2] * len(series), index=series.index)
     
-    # Create RFM scores
-    rfm['R_Score'] = pd.qcut(rfm['Recency'], 4, labels=[4, 3, 2, 1])
-    rfm['F_Score'] = pd.qcut(rfm['Frequency'].rank(method='first'), 4, labels=[1, 2, 3, 4])
-    rfm['M_Score'] = pd.qcut(rfm['Monetary'], 4, labels=[1, 2, 3, 4])
+    # Create RFM scores safely
+    rfm['R_Score'] = safe_qcut(rfm['Recency'], q=4, ascending=False)
+    rfm['F_Score'] = safe_qcut(rfm['Frequency'], q=4, ascending=True)
+    rfm['M_Score'] = safe_qcut(rfm['Monetary'], q=4, ascending=True)
     
+    # Combine RFM score
     rfm['RFM_Score'] = rfm['R_Score'].astype(str) + rfm['F_Score'].astype(str) + rfm['M_Score'].astype(str)
-    
+
     # Segment customers
     def segment_customers(row):
         if row['R_Score'] >= 3 and row['F_Score'] >= 3 and row['M_Score'] >= 3:
