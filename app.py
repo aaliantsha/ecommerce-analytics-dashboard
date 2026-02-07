@@ -324,6 +324,16 @@ def main():
             color='TotalPrice',
             color_continuous_scale='Viridis'
         )
+        # fig_top_customers.update_xaxes(
+        #     tickformat=",d",
+        #     exponentformat="none"
+        # )
+
+        fig_top_customers.update_traces(
+            hovertemplate=
+            "Customer ID: %{y}<br>" +
+            "Revenue: %{x:,.0f}<extra></extra>"
+            )
         st.plotly_chart(fig_top_customers, use_container_width=True)
     
     # RFM metrics
