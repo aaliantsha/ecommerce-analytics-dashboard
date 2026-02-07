@@ -66,7 +66,7 @@ E-commerce businesses need to understand their sales performance, customer behav
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/yourusername/ecommerce-analytics-dashboard.git
+git clone https://github.com/aaliantsha/ecommerce-analytics-dashboard.git
 cd ecommerce-analytics-dashboard
 ```
 
@@ -94,4 +94,3 @@ streamlit run app.py
 5. **Access the dashboard**
 - Open your browser and go to `http://localhost:8501`
 - The dashboard will automatically load and fetch the dataset
-
