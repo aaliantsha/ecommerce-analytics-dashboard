@@ -167,7 +167,7 @@ def main():
     # Country filter
     countries = ['All'] + sorted(df['Country'].unique().tolist())
     selected_country = st.sidebar.selectbox("Select Country", countries)
-    
+
     # Apply filters
     if len(date_range) == 2:
         df_filtered = df[
@@ -206,42 +206,47 @@ def main():
     kpis = calculate_kpis(df_filtered)
     
     # Display KPIs
-    st.header("📊 Key Performance Indicators")
+    st.header("📊 Overview")
     col1, col2, col3, col4, col5 = st.columns(5)
     
     with col1:
         st.metric(
             label="Total Revenue",
             value=f"${kpis['total_revenue']:,.2f}",
-            delta="Revenue Generated"
+            # delta="Revenue Generated"
+            delta = None
         )
     
     with col2:
         st.metric(
             label="Total Transactions",
             value=f"{kpis['total_transactions']:,}",
-            delta="Unique Orders"
+            # delta="Unique Orders"
+            delta = None
         )
     
     with col3:
         st.metric(
             label="Total Customers",
             value=f"{kpis['total_customers']:,}",
-            delta="Unique Customers"
+            # delta="Unique Customers"
+            delta = None
         )
     
     with col4:
         st.metric(
             label="Total Products",
             value=f"{kpis['total_products']:,}",
-            delta="Unique Items"
+            # delta="Unique Items"
+            delta = None
         )
     
     with col5:
         st.metric(
             label="Avg Order Value",
             value=f"${kpis['avg_order_value']:,.2f}",
-            delta="Per Transaction"
+            # delta="Per Transaction"
+            delta = None
         )
     
     st.markdown("---")
